@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gangOfFour.shopping.dao.ColorCentreDao">
+    <insert id="insertColorCentre" useGeneratedKeys="true" keyProperty="colorCentreId" keyColumn="colorCentreId">
+        INSERT INTO colorcentre(productId,productColorId) VALUES(#{productInfo.productId},#{productColor.productColorId});
+    </insert>
+    <select id="selectByproIdAndcolorIdColorCentre" resultType="ColorCentre">
+        select * from colorcentre where productColorId =${productColorId} and productId=${productId}
+    </select>
+
+
+    <select id="selectByProductIdColorCentre" resultMap="colorCentre">
+        select * from colorcentre where productId=${productId}
+    </select>
+    <resultMap id="colorCentre" type="ColorCentre">
+        <association property="productColor" column="productColorId" javaType="ProductColor" select="selectByIdProductColor"/>
+    </resultMap>
+
+
+    <select id="selectByIdProductColor" resultType="ProductColor">
+        select * from productcolor where productColorId=#{productColorId}
+    </select>
+    <!--根据颜色id 去查询 颜色图片，版本-->
+    <!--<select id="selectByIdColorCentre" resultMap="byIdColorCentre">
+        select * from colorcentre where colorCentreId=${colorCentreId}
+    </select>-->
+
+</mapper>

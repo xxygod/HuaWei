@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gangOfFour.shopping.dao.ShoppingCartDao">
+
+    <!--查询用户购物车详细数据-->
+    <select id="selectByLoginIdShoppingCart" resultMap="shoppingCart">
+        select * from shoppingcart where loginId=#{loginId}
+    </select>
+
+    <resultMap id="shoppingCart" type="ShoppingCart">
+        <association property="productInfo" column="productId" javaType="ProductInfo" select="selectByIdProductInfo"/>
+        <association property="productColor" column="productColorId" javaType="ProductColor" select="selectByIdProductColor"/>
+        <association property="proVersions" column="proVersionsId" javaType="ProVersions" select="selectByIdProVersions"/>
+    </resultMap>
+
+    <select id="selectByIdProductInfo" resultType="ProductInfo">
+        select * from productInfo where productId=#{productId}
+    </select>
+
+    <select id="selectByIdProductColor" resultType="ProductColor">
+        select * from productColor where productColorId=#{productColorId}
+    </select>
+
+    <select id="selectByIdProVersions" resultType="ProVersions">
+        select * from proVersions where proVersionsId=#{proVersionsId}
+    </select>
+
+    <!--修改购物车数据-->
+    <update id="updateById">
+        update shoppingcart set productNumber=${productNumber} where shoppingCartId=${shoppingCartId}
+    </update>
+
+    <!--根据id删除购物车的商品-->
+    <delete id="deleteByIdCart">
+        delete from  shoppingcart where shoppingCartId=${shoppingCartId}
+    </delete>
+
+    <!--购物车添加商品-->
+    <insert id="insertShoppingCert">
+        insert into shoppingcart(loginId,productId,productNumber,productPrice,proVersionsId,productColorId)
+        value(${userLogin.loginId},${productInfo.productId},${productNumber},${productPrice},${proVersions.proVersionsId},${productColor.productColorId});
+    </insert>
+
+    <!--添加商品时先查询购物车有没有添加过这商品-->
+    <select id="selectByLoginIdCart" resultType="ShoppingCart">
+        select * from shoppingcart where loginId=${loginId} and productId=${productId} and productColorId=${productColorId} and proVersionsId= ${proVersionsId}
+    </select>
+
+    <!--如果已添加这个商品后只需要添加数量-->
+    <update id="updateBySCIdCart">
+        update shoppingCart set productNumber=${productNumber} where shoppingCartId=${shoppingCartId}
+    </update>
+
+    <!--根据listId查出所有的商品-->
+    <select id="selectListShoppingCart" resultMap="shoppingCart">
+        select * from shoppingcart where shoppingCartId in (
+        <foreach collection="shoppingCarts" item="carts" index="index" separator=",">
+            ${carts}
+        </foreach>
+        )
+    </select>
+</mapper>

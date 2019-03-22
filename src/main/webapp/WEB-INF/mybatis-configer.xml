@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="lazyLoadingEnabled" value="false" />
+        <setting value="STDOUT_LOGGING" name="logImpl"/>
+        <setting name="jdbcTypeForNull" value="NULL" />
+    </settings>
+    <typeAliases>
+        <typeAlias type="com.gangOfFour.shopping.pojo.UserLogin" alias="UserLogin"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.ColorCentre" alias="ColorCentre"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.CommentCentre" alias="CommentCentre"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.CommentPicture" alias="CommentPicture"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.Logistics" alias="Logistics"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.OneCategory" alias="OneCategory"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.OrderDetail" alias="OrderDetail"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.OrderMaster" alias="OrderMaster"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.Pack" alias="Pack"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.PictureColor" alias="PictureColor"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.PictureInfo" alias="PictureInfo"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.ProductInfo" alias="ProductInfo"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.ProductColor" alias="ProductColor"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.ProductComment" alias="ProductComment"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.ProVersions" alias="ProVersions"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.Refund" alias="Refund"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.Reply" alias="Reply"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.ShoppingCart" alias="ShoppingCart"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.TwoCategory" alias="TwoCategory"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.UserAddress" alias="UserAddress"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.UserInfo" alias="UserInfo"/>
+        <typeAlias type="com.gangOfFour.shopping.pojo.VerCentre" alias="VerCentre"/>
+    </typeAliases>
+
+</configuration>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gangOfFour.shopping.dao.OrderMasterDao">
+    <insert id="insertOrderMaster" useGeneratedKeys="true" keyProperty="orderMasterId" keyColumn="orderMasterId">
+        insert into ordermaster(orderNo, loginId, orderMoney, districtMoney, paymentMoney, createTime, orderPoint, consignee, province, city, district, address,phone,code)
+         value (#{orderNo},${userLogin.loginId},${orderMoney},${districtMoney},${paymentMoney},#{createTime},${orderPoint},#{consignee},#{province},#{city},#{district},#{address},#{phone},#{code});
+    </insert>
+    <update id="updatePayStatus">
+        update ordermaster set payStatus=1 where orderNo=#{orderNo}
+    </update>
+    <!--根据订单编号去查询订单-->
+    <select id="selectByOrderNoOrderMaster" resultType="OrderMaster">
+        select * from ordermaster where orderNo=#{orderNo}
+    </select>
+    <!--查询待支付的数量-->
+    <select id="selectUnpaidNumber" resultType="java.lang.Integer">
+        select count(payStatus) from ordermaster where payStatus=0 and loginId=#{loginId}
+    </select>
+    <!--查询待收货的数量-->
+    <select id="selectReceivingNumber" resultType="java.lang.Integer">
+        select count(payStatus) from ordermaster where payStatus=1 and orderStatus=1 and loginId=#{loginId}
+    </select>
+    <!--查询已完成的数量-->
+    <select id="selectStocksNumber" resultType="java.lang.Integer">
+        select count(payStatus) from ordermaster where payStatus=1 and orderStatus=2 and loginId=#{loginId}
+    </select>
+    <!--查询订单状态
+    status
+    1，order  查询全部订单
+    2.unpaid  查询未支付的订单
+    3.take  查询待收货的订单
+    4.accomplish  查询已完成的订单
+    5.cancel  查询已取消的订单
+    订单的状态
+    payStatus  0  未支付   1  已支付
+    orderStatus   0  待审核  1 已发货  2 已收货   3 已完成
+    -->
+    <select id="selectUnpaidDetail" resultMap="orderMaster">
+        select * from ordermaster
+        <if test="status == 'order'">
+        where loginId=#{loginId}
+        </if>
+
+        <if test="status == 'unpaid'">
+        where payStatus = 0 and loginId=#{loginId}
+        </if>
+
+        <if test="status == 'take'">
+            where payStatus = 1 and loginId=#{loginId} and orderstatus= 1
+        </if>
+
+        <if test="status == 'accomplish'">
+            where payStatus = 1 and loginId=#{loginId} and orderstatus= 2
+        </if>
+
+        <if test="status == 'cancel'">
+            where payStatus = 1 and loginId=#{loginId} and orderstatus= 3
+        </if>
+    </select>
+    <resultMap id="orderMaster" type="OrderMaster">
+        <id column="orderMasterId" property="orderMasterId"/>
+        <collection property="orderDetailList" column="orderMasterId" ofType="OrderDetail" select="selectByOMIdOrderDetail"/>
+    </resultMap>
+    <select id="selectByOMIdOrderDetail" resultMap="orderDetail">
+        select * from orderdetail where orderMasterId=#{orderMasterId}
+    </select>
+    <resultMap id="orderDetail" type="OrderDetail">
+        <association property="productInfo" column="productId" javaType="ProductInfo" select="selectByOMIdProductInfo"/>
+        <association property="proVersions" column="proVersionsId" javaType="ProVersions" select="selectByOMIdProVersions"/>
+        <association property="productColor" column="productColorId" javaType="ProductColor" select="selectByOMIdProductColor"/>
+    </resultMap>
+    <select id="selectByOMIdProductInfo" resultType="ProductInfo">
+        select * from productinfo where productId=#{productId}
+    </select>
+    <select id="selectByOMIdProVersions" resultType="ProVersions">
+        select * from ProVersions where proVersionsId=#{proVersionsId}
+    </select>
+    <select id="selectByOMIdProductColor" resultType="ProductColor">
+        select * from ProductColor where productColorId=#{productColorId}
+    </select>
+</mapper>

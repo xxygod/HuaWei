@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gangOfFour.shopping.dao.VerCentreDao">
+    <insert id="insertVerCentre" useGeneratedKeys="true" keyProperty="verCentreId" keyColumn="verCentreId">
+      INSERT INTO verCentre(colorCentreId,proVersionsId,inventory,parament,productPrice,productCost,description) VALUES(${colorCentre.colorCentreId},${proVersions.proVersionsId},#{inventory},#{parament},${productPrice},${productCost},#{description})
+    </insert>
+    <select id="selectByIdVerCentre" resultType="VerCentre">
+        select * from VerCentre where verCentreId =  #{verCentreId}
+    </select>
+    <select id="selectByOCIdVerCentre" resultMap="verCentre">
+        select verCentreId,proVersionsId from vercentre where colorCentreId=${colorCentreId}
+    </select>
+    <resultMap id="verCentre" type="VerCentre">
+        <association property="proVersions" column="proVersionsId" javaType="ProVersions" select="selectByIdProVersions"/>
+    </resultMap>
+    <select id="selectByIdProVersions" resultType="ProVersions">
+        select * from proversions where proVersionsId=#{proVersionsId}
+    </select>
+    <!--index主页查询价格-->
+    <select id="selectByProductIdVerCentre" resultType="VerCentre">
+        SELECT productPrice FROM verCentre
+        WHERE colorCentreId=(SELECT colorCentreId FROM colorCentre WHERE productId=${productId} LIMIT 0,1) LIMIT 0,1
+    </select>
+
+
+    <!--根据id去查询一件商品详细信息-->
+    <select id="selectByIdProductInfo" resultMap="byVCIdVerCentre">
+        select * from vercentre where verCentreId =${verCentreId}
+    </select>
+    <resultMap id="byVCIdVerCentre" type="VerCentre">
+        <association property="proVersions" column="proVersionsId" javaType="ProVersions" select="selectByIdProVersions"/>
+        <association property="colorCentre" column="colorCentreId" javaType="ColorCentre" select="selectByVCIdColorCentre"/>
+    </resultMap>
+    <select id="selectByVCIdColorCentre" resultMap="byVCIdColorCentre">
+        select * FROM ColorCentre where colorCentreId=#{colorCentreId}
+    </select>
+    <resultMap id="byVCIdColorCentre" type="ColorCentre">
+        <association property="productColor" column="productColorId" javaType="ProductColor" select="selectByVCIdProductColor"/>
+        <association property="productInfo" column="productId" javaType="ProductInfo" select="selectByVCIdProductInfo"/>
+    </resultMap>
+    <select id="selectByVCIdProductColor" resultType="ProductColor">
+        select * FROM ProductColor where productColorId=#{productColorId}
+    </select>
+    <select id="selectByVCIdProductInfo" resultType="ProductInfo">
+        select * FROM ProductInfo where productId=#{productId}
+    </select>
+</mapper>

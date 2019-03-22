@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gangOfFour.shopping.dao.ProductInfoDao">
+    <insert id="insertProductInfo" useGeneratedKeys="true" keyProperty="productId" keyColumn="productId">
+        INSERT INTO productinfo(productCore,productName,oneCategoryId,twoCategoryId,productAudit,productDate,pattern,logo)
+         VALUES(#{productCore},#{productName},${oneCategory.oneCategoryId},${twoCategory.twoCategoryId}
+         ,${0},#{productDate},#{pattern},#{logo})
+    </insert>
+
+    <!--查询所有的商品详细信息-->
+    <select id="selectAllProductInfo" resultMap="productInfo">
+        select * from ProductInfo
+    </select>
+
+    <!--根据id 查询商品详细信息-->
+    <select id="selectByIdProductInfo" resultMap="productInfo">
+        select * from ProductInfo where productId=${productId}
+    </select>
+    <resultMap id="productInfo" type="ProductInfo">
+        <id property="productId" column="productId"/>
+        <association property="oneCategory" column="oneCategoryId" javaType="OneCategory" select="selectAllOneCateGory"/>
+        <association property="twoCategory" column="twoCategoryId" javaType="TwoCategory" select="selectAllTwoCateGory"/>
+        <collection property="colorCentres" column="productId" ofType="ColorCentre" select="selectAllColorCentre"/>
+        <collection property="pictureInfos" column="productId" ofType="PictureInfo" select="selectAllPictureInfo"/>
+    </resultMap>
+
+    <select id="selectAllOneCateGory" resultType="OneCategory">
+        select * from onecategory where oneCategoryId=#{oneCategoryId}
+    </select>
+    <select id="selectAllTwoCateGory" resultType="TwoCategory">
+        select * from TwoCategory where twoCategoryId=#{twoCategoryId}
+    </select>
+    <select id="selectAllColorCentre" resultMap="colorCentre">
+        select * from colorcentre where productId=#{productId}
+    </select>
+    <select id="selectAllPictureInfo" resultType="PictureInfo">
+        select * from pictureinfo where productId=#{productId}
+    </select>
+
+    <resultMap id="colorCentre" type="ColorCentre">
+        <id property="colorCentreId" column="colorCentreId"/>
+        <association property="productColor" column="productColorId" javaType="ProductColor" select="selectAllProductColor"/>
+        <collection property="verCentres" column="colorCentreId" ofType="VerCentre" select="selectAllVerCentre"/>
+        <collection property="pictureColors" column="colorCentreId" ofType="PictureColor" select="selectAllPictureColor"/>
+    </resultMap>
+    <select id="selectAllProductColor" resultType="ProductColor">
+        select * from ProductColor where productColorId = #{productColorId}
+    </select>
+    <select id="selectAllVerCentre" resultMap="verCentre">
+        select * from VerCentre where colorCentreId =  #{colorCentreId}
+    </select>
+    <select id="selectAllPictureColor" resultType="PictureColor">
+        select * from PictureColor where colorCentreId =  #{colorCentreId}
+    </select>
+    <resultMap id="verCentre" type="VerCentre">
+        <association property="proVersions" column="proVersionsId" javaType="ProVersions" select="selectAllProVersions"/>
+    </resultMap>
+    <select id="selectAllProVersions" resultType="ProVersions">
+        select * from proversions where proVersionsId = #{proVersionsId}
+    </select>
+
+
+    <!--index  根据一级分类和销售模式查询商品-->
+    <select id="selectByPatternProductInfo" resultType="ProductInfo" flushCache="true">
+        SELECT * FROM productinfo WHERE productId &gt;= (
+        SELECT FLOOR( RAND() * (SELECT MAX(productId) FROM `productinfo`) )
+        )
+        <if test="voProducts != null">
+            and  productId not in
+            <foreach collection="voProducts" item="voProduct" index="index"
+                     open="(" close=")" separator=",">
+                ${voProduct.productId}
+            </foreach>
+        </if>
+        <if test="oneCategoryId != 0">
+            and oneCategoryId=${oneCategoryId}
+        </if>
+        <if test="pattern != null">
+            and  pattern=#{pattern}
+        </if>
+        ORDER BY productId
+        limit ${number}
+    </select>
+    <!--index   selectByPatternProductInfo  随机查不到品时 才执行 此方法-->
+    <select id="selectProductInfo" resultType="ProductInfo">
+        SELECT * FROM productinfo
+        <trim prefix="WHERE" prefixOverrides="and">
+            <if test="voProducts != null">
+                 and productId not in
+                <foreach collection="voProducts" item="voProduct" index="index"
+                         open="(" close=")" separator=",">
+                    ${voProduct.productId}
+                </foreach>
+            </if>
+            <if test="oneCategoryId != 0">
+                and oneCategoryId=${oneCategoryId}
+            </if>
+            <if test="pattern != null">
+                and  pattern=#{pattern}
+            </if>
+        </trim>
+        ORDER BY productId
+        limit ${number}
+    </select>
+
+    <!--<select id="selectAlllProductInfo" resultMap="OneProductInfo">
+        select * from productinfo
+    </select>
+    <resultMap id="OneProductInfo" type="ProductInfo">
+        <association property="oneCategory" column="oneCategoryId" javaType="OneCategory" select="selectAllOneCateGory"/>
+        <association property="twoCategory" column="twoCategoryId" javaType="TwoCategory" select="selectAllTwoCateGory"/>
+    </resultMap>
+    <select id="selectAllOneCateGory" resultType="OneCategory">
+        select * from onecategory where oneCategoryId=#{oneCategoryId}
+    </select>
+    <select id="selectAllTwoCateGory" resultType="TwoCategory">
+        select * from TwoCategory where twoCategoryId=#{twoCategoryId}
+    </select>-->
+
+    <!--根据一级分类去查询所有的分类商品-->
+    <select id="selectByOCIdProduct" resultType="ProductInfo">
+        select p.* from productinfo p,colorcentre c ,vercentre v
+        where p.productId=c.productId and c.colorCentreId=v.colorCentreId and oneCategoryId=${oneCategoryId}
+        group by v.colorCentreId
+        <if test="order!= null">
+        ORDER BY ${order}
+            <if test="by!=null">
+                ${by}
+            </if>
+        </if>
+    </select>
+
+
+    <!--根据二级分类去查询所有的分类商品-->
+    <select id="selectByTCIdProduct" resultType="ProductInfo">
+        select p.* from productinfo p,colorcentre c ,vercentre v
+        where p.productId=c.productId and c.colorCentreId=v.colorCentreId and twoCategoryId=${twoCategoryId}
+        group by v.colorCentreId
+        <if test="order!= null">
+            ORDER BY ${order}
+            <if test="by!=null">
+                ${by}
+            </if>
+        </if>
+    </select>
+
+
+    <!--根据搜索框模糊查询-->
+    <select id="selectLikeProduct" resultType="ProductInfo">
+        select p.* from  productinfo p,colorcentre c ,vercentre v
+        where p.productId=c.productId and c.colorCentreId=v.colorCentreId and p.productName like #{productName}
+        group by v.colorCentreId
+        <if test="order!= null">
+            ORDER BY ${order}
+            <if test="by!=null">
+                ${by}
+            </if>
+        </if>
+    </select>
+
+    <!-- 根据一级分类id查询二级分类名 -->
+    <select id="selectCategoryName" resultType="TwoCategory">
+        SELECT * FROM twocategory WHERE onecategoryid=${oneCategoryId}
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

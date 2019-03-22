@@ -1,0 +1,59 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html class="no-js">
+<head>
+    <title>404</title>
+
+    <link type="text/css" rel="stylesheet" media="all" href="css/public-reception/simple-page.css">
+    <link type="text/css" rel="stylesheet" media="all" href="css/public-reception/jquery-ui-clcustom.css">
+    <link type="text/css" rel="stylesheet" media="all" href="css/public-reception/jquery.qtip-2.2.1.css">
+</head>
+
+<body class="simple header footer">
+
+<div class="page-container">
+    <header class="global-header">
+        <a class="header-logo" name="logoLink" href="index.jsp">首页</a>
+        <nav class="breadcrumbs-container">
+            <ul class="breadcrumbs">
+                <li class="crumb">
+                    <p>
+                        Page not fond
+                    </p>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="simple-page-content">
+        <br><br>
+        <blockquote>
+            <p>There is nothing here</p>
+            <p>No web page for this address</p>
+            <p style="color: red;font-size: 22px">404 Error</p>
+            <pre>
+<big>
+
+ _____________
+(  <a href="index.jsp">return to</a>  )
+(  <a href="index.jsp">craigslist</a> )
+(  <a href="index.jsp">homepage?</a>  )
+ -------------
+       O
+	O   ^__^
+	 o  (oo)\_______
+	    (__)\       )\/\
+		||----w |
+		||     ||
+</big>
+</pre>
+        </blockquote>
+    </section>
+    <footer>
+        <ul class="clfooter">
+            <li><span style="font-size:12px;color: red">阿里巴巴与四个大盗软件有限公司 版权所有 盗版必究</span></li>
+        </ul>
+    </footer>
+</div>
+</body>
+</html>
+

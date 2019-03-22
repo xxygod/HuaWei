@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gangOfFour.shopping.dao.UserLoginDao">
+    <select id="selectLogin" resultMap="userLogin">
+        select * from userlogin where loginName = #{loginName} and loginPassword = #{loginPassword}
+    </select>
+    <resultMap id="userLogin" type="UserLogin">
+        <id property="loginId" column="loginId"/>
+        <collection property="userInfo" column="loginId" ofType="UserInfo" select="selectByLoginIdUserInfo"/>
+    </resultMap>
+    <select id="selectByLoginIdUserInfo" resultType="UserInfo">
+        select * from userinfo where loginId=#{loginId}
+    </select>
+
+    <!--用户登录-->
+    <select id="findUserByNameAndPwd" resultMap="userLogin">
+        select * from userlogin where loginName = #{loginName} and loginPassword = #{loginPassword}
+    </select>
+
+    <select id="findUserByName" resultType="UserLogin">
+        select * from userlogin where loginName = #{loginName}
+    </select>
+
+    <insert id="insertUser" useGeneratedKeys="true" parameterType="UserLogin" keyProperty="loginId" keyColumn="loginId">
+        insert into userlogin (loginName, loginPassword,screenName) VALUE (#{loginName},#{loginPassword},#{screenName})
+    </insert>
+
+    <update id="updateUser" parameterType="UserLogin">
+        update userlogin set loginPassword = #{loginPassword}
+    </update>
+
+
+</mapper>
